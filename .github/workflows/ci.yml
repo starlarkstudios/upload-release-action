@@ -42,14 +42,14 @@ jobs:
           const assert = require('assert').strict;
 
           const expected = fs.readFileSync("README.md", "utf-8")
-          const release = await github.repos.getReleaseByTag({
+          const release = await github.rest.repos.getReleaseByTag({
             ...context.repo,
             tag: "ci-test-${{ matrix.os }}-${{ github.run_id }}",
           })
           assert.deepStrictEqual(release.data.prerelease, true)
           assert.deepStrictEqual(release.data.body, "rofl lol test\nianal % fubar")
           assert.deepStrictEqual(release.data.assets[0].name, "TEST.md")
-          const actual = await github.request(release.data.assets[0].browser_download_url)
+          const actual = await github.rest.request(release.data.assets[0].browser_download_url)
           assert.deepStrictEqual(expected, actual.data)
     - name: Make test promote
       uses: ./
@@ -73,14 +73,14 @@ jobs:
           const assert = require('assert').strict;
           
           const expected = fs.readFileSync("README.md", "utf-8")
-          const release = await github.repos.getReleaseByTag({
+          const release = await github.rest.repos.getReleaseByTag({
             ...context.repo,
             tag: "ci-test-${{ matrix.os }}-${{ github.run_id }}",
           })
           assert.deepStrictEqual(release.data.prerelease, false)
           assert.deepStrictEqual(release.data.body, "new body")
           assert.deepStrictEqual(release.data.assets[0].name, "TEST.md")
-          const actual = await github.request(release.data.assets[0].browser_download_url)
+          const actual = await github.rest.request(release.data.assets[0].browser_download_url)
           assert.deepStrictEqual(expected, actual.data)
     - name: Clean up
       if: ${{ always() }}
@@ -88,15 +88,15 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          const release = await github.repos.getReleaseByTag({
+          const release = await github.rest.repos.getReleaseByTag({
             ...context.repo,
             tag: "ci-test-${{ matrix.os }}-${{ github.run_id }}",
           })
-          await github.repos.deleteRelease({
+          await github.rest.repos.deleteRelease({
             ...context.repo,
             release_id: release.data.id,
           })
-          await github.git.deleteRef({
+          await github.rest.git.deleteRef({
             ...context.repo,
             ref: "tags/ci-test-${{ matrix.os }}-${{ github.run_id }}",
           })
