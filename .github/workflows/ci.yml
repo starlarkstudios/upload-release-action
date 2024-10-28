@@ -41,6 +41,7 @@ jobs:
 
           const expected = fs.readFileSync("README.md", "utf-8")
           const release = await github.rest.repos.getReleaseByTag({
+            owner: "starlarkstudios",
             ...context.repo,
             tag: "ci-test-${{ matrix.os }}-${{ github.run_id }}",
           })
@@ -72,6 +73,7 @@ jobs:
           
           const expected = fs.readFileSync("README.md", "utf-8")
           const release = await github.rest.repos.getReleaseByTag({
+            owner: "starlarkstudios",
             ...context.repo,
             tag: "ci-test-${{ matrix.os }}-${{ github.run_id }}",
           })
@@ -87,14 +89,17 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
           const release = await github.rest.repos.getReleaseByTag({
+            owner: "starlarkstudios",
             ...context.repo,
             tag: "ci-test-${{ matrix.os }}-${{ github.run_id }}",
           })
           await github.rest.repos.deleteRelease({
+            owner: "starlarkstudios",
             ...context.repo,
             release_id: release.data.id,
           })
           await github.rest.git.deleteRef({
+            owner: "starlarkstudios",
             ...context.repo,
             ref: "tags/ci-test-${{ matrix.os }}-${{ github.run_id }}",
           })
